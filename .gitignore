@@ -1,0 +1,31 @@
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+#Backup files
+*.bak
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+build/
+bld/
+[Bb]in/
+[Oo]bj/
+
+# MSTest test Results
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+
+#Custom
+mongo/
+node_modules/
+bower_components/
+packages/
+*.orig

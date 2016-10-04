@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<configuration>
+  <configSections>
+    <section name="packageInstallation" type="Sitecore.Grab.Classes.Configuration.PackageExportConfiguration, Sitecore.Grab"/>
+    <section name="nancyFx" type="Nancy.Hosting.Aspnet.NancyFxSection" />
+  </configSections>
+  <packageInstallation enabled="true" allowRemote="false" allowPackageStreaming="false" recordInstallationHistory="false" muteAuthorisationFailureLogging="false" />
+  <nancyFx>
+    <bootstrapper assembly="Sitecore.Grab" type="Sitecore.Grab.Classes.Bases.DefaultGrabBootstrapper, Sitecore.Grab" />
+  </nancyFx>
+  <system.webServer>
+    <modules runAllManagedModulesForAllRequests="true"/>
+    <validation validateIntegratedModeConfiguration="false"/>
+    <handlers>
+      <remove name="Nancy" />
+      <add name="Nancy" verb="*" type="Nancy.Hosting.Aspnet.NancyHttpRequestHandler" path="/services/*"  />
+    </handlers>
+  </system.webServer>
+</configuration>
