@@ -14,18 +14,8 @@ namespace Sitecore.Grab.Classes.Contracts.Classes
             {
                 IsEnabled = config.Enabled,
                 AllowRemoteAccess = config.AllowRemoteAccess,
-                AllowPackageStreaming = config.AllowPackageStreaming,
-                RecordInstallationHistory = config.RecordInstallationHistory,
-                MuteAuthorisationFailureLogging = config.MuteAuthorisationFailureLogging
+                AddressWhitelist = config.Whitelist
             };
-
-            if (config.Whitelist.Count > 0)
-            {
-                foreach (var item in config.Whitelist)
-                {
-                    Settings.AddressWhitelist.Add(item.IP);
-                }
-            }
         }
 
         public PackegeExportSettings Settings { get; private set; }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using NetTools;
 
 namespace Sitecore.Grab.Classes.Domain
 {
@@ -8,18 +9,12 @@ namespace Sitecore.Grab.Classes.Domain
         {
             IsEnabled = false;
             AllowRemoteAccess = false;
-            AllowPackageStreaming = false;
-            RecordInstallationHistory = false;
-            AddressWhitelist = new List<string>();
-            MuteAuthorisationFailureLogging = false;
+            AddressWhitelist = new Dictionary<string, IPAddressRange>();
         }
 
         public bool IsEnabled { get; set; }
         public bool AllowRemoteAccess { get; set; }
-        public bool AllowPackageStreaming { get; set; }
-        public bool RecordInstallationHistory { get; set; }
-        public List<string> AddressWhitelist { get; set; }
-        public bool MuteAuthorisationFailureLogging { get; set; }
+        public Dictionary<string, IPAddressRange> AddressWhitelist { get; set; }
         public bool HasAddressWhitelist { get { return AddressWhitelist.Count > 0; } }
     }
 }

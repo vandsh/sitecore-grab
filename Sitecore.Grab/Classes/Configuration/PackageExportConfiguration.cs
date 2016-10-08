@@ -1,97 +1,48 @@
-﻿using System.Configuration;
-
+﻿using System.Collections.Generic;
+using System.Configuration;
+using System.Linq;
+using System.Net;
+using Nancy;
+using Nancy.Extensions;
+using NetTools;
+using Sitecore.Data;
+using Sitecore.Data.Fields;
+using Sitecore.SecurityModel;
 namespace Sitecore.Grab.Classes.Configuration
 {
-    class PackageExportConfiguration : ConfigurationSection
+  class PackageExportConfiguration
+  {
+    private static PackageExportConfiguration _configuration;
+
+    public static PackageExportConfiguration GetConfiguration()
     {
-        const string SectionName = "packageInstallation";
-        const string EnabledKey = "enabled";
-        const string AllowRemoteKey = "allowRemote";
-        const string AllowPackageStreamingKey = "allowPackageStreaming";
-        const string RecordInstallationHistoryKey = "recordInstallationHistory";
-        const string WhitelistElementName = "Whitelist";
-        const string MuteAuthorisationFailureLoggingKey = "muteAuthorisationFailureLogging";
-
-        public static PackageExportConfiguration GetConfiguration()
-        {
-            var configuration = ConfigurationManager.GetSection(SectionName) as PackageExportConfiguration;
-            return configuration ?? new PackageExportConfiguration();
-        }
-
-        [ConfigurationProperty(EnabledKey, IsRequired = false, DefaultValue = false)]
-        public bool Enabled { get { return (bool)this[EnabledKey]; } }
-
-        [ConfigurationProperty(AllowRemoteKey, IsRequired = false, DefaultValue = false)]
-        public bool AllowRemoteAccess { get { return (bool)this[AllowRemoteKey]; } }
-
-        [ConfigurationProperty(AllowPackageStreamingKey, IsRequired = false, DefaultValue = false)]
-        public bool AllowPackageStreaming { get { return (bool)this[AllowPackageStreamingKey]; } }
-
-        [ConfigurationProperty(RecordInstallationHistoryKey, IsRequired = false, DefaultValue = false)]
-        public bool RecordInstallationHistory { get { return (bool)this[RecordInstallationHistoryKey]; } }
-
-        [ConfigurationProperty(WhitelistElementName)]
-        public WhitelistCollection Whitelist
-        {
-            get { return ((WhitelistCollection)(base[WhitelistElementName])); }
-        }
-
-        [ConfigurationProperty(MuteAuthorisationFailureLoggingKey, IsRequired = false, DefaultValue = false)]
-        public bool MuteAuthorisationFailureLogging { get { return (bool)this[MuteAuthorisationFailureLoggingKey]; } }
-    }
-
-    [ConfigurationCollection(typeof(WhitelistElement))]
-    public class WhitelistCollection : GenericConfigurationElementCollection<WhitelistElement>
+      return _configuration ?? new PackageExportConfiguration();
+    }
+    public PackageExportConfiguration()
     {
-        protected override ConfigurationElement CreateNewElement()
-        {
-            return new WhitelistElement();
-        }
+      using (new SecurityDisabler())
+      {
+        Database authorityDatabase = Sitecore.Configuration.Factory.GetDatabase("master");
+        var grabSettings = authorityDatabase.GetItem("/sitecore/system/Settings/Grab Settings");
+        CheckboxField enabledField = grabSettings.Fields["Enabled"];
+        this._enabled = enabledField.Checked;
+        CheckboxField allowRemoteField = grabSettings.Fields["Allow Remote"];
+        this._allowRemote = allowRemoteField.Checked;
+        var whitelistNameValueCollection = ((NameValueListField)grabSettings.Fields["Whitelist"]).NameValues;
+        this._whitelist = whitelistNameValueCollection.AllKeys.ToDictionary(k => k, k => IPAddressRange.Parse(whitelistNameValueCollection[k]));
+      }    }
 
-        protected override object GetElementKey(ConfigurationElement element)
-        {
-            return ((WhitelistElement)(element)).Name;
-        }
-
-        public WhitelistElement this[int idx]
-        {
-            get
-            {
-                return (WhitelistElement)BaseGet(idx);
-            }
-        }
-    }
-
-    public class WhitelistElement : ConfigurationElement
+    private bool _enabled = false;    public bool Enabled
     {
-        private const string NameKey = "name";
-
-        [ConfigurationProperty(NameKey, DefaultValue = "", IsKey = true, IsRequired = true)]
-        public string Name
-        {
-            get
-            {
-                return ((string)(base[NameKey]));
-            }
-            set
-            {
-                base[NameKey] = value;
-            }
-        }
-
-        private const string IpKey = "IP";
-
-        [ConfigurationProperty(IpKey, DefaultValue = "", IsKey = false, IsRequired = true)]
-        public string IP
-        {
-            get
-            {
-                return ((string)(base[IpKey]));
-            }
-            set
-            {
-                base[IpKey] = value;
-            }
-        }
+      get { return GetConfiguration()._enabled; }
     }
+    private bool _allowRemote = false;    public bool AllowRemoteAccess
+    {
+      get { return GetConfiguration()._allowRemote; }
+    }
+    private Dictionary<string, IPAddressRange> _whitelist = new Dictionary<string, IPAddressRange>();    public Dictionary<string, IPAddressRange> Whitelist
+    {
+      get { return GetConfiguration()._whitelist; }
+    }
+  }
 }
