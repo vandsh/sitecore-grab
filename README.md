@@ -14,7 +14,7 @@ Should be as easy as:
 
 1. Build the project on its own and add the `Sitecore.Grab.dll` or add all the source to your solution
 
-1. Update your `web.config` by making the following changes:
+1. Update your `web.config` by making the following changes _(all changes are also included in [web.config.transform](https://github.com/vandsh/sitecore-grab/blob/master/Sitecore.Grab/content/web.config.transform))_:
     * add ```<section name="nancyFx" type="Nancy.Hosting.Aspnet.NancyFxSection" />```
 to your `<configSections>` node, 
     * add `<remove name="Nancy" /><add name="Nancy" verb="*" type="Nancy.Hosting.Aspnet.NancyHttpRequestHandler" path="/services/*" />` to the very bottom of your `<handlers>` node, 
@@ -23,13 +23,12 @@ to your `<configSections>` node,
       <add name="local loopback" IP="127.0.0.1" />
     </Whitelist>
   </packageInstallation>` and `<nancyFx><bootstrapper assembly="Sitecore.Grab" type="Sitecore.Grab.Classes.Bases.DefaultBootstrapper, Sitecore.Grab" /></nancyFx>` to the very bottom of the `<configuration>` node in your `web.config`
-    * **All changes are also included in [web.config.transform](https://github.com/vandsh/sitecore-grab/blob/master/Sitecore.Grab/content/web.config.transform)**
 
 1. Deploy all the things
 
 ### How do I use it? ###
 
-1. ~~Sanity check: `http://<yourserver>/services/about` ~~
+1. ~Sanity check: `http://<yourserver>/services/about` ~
 
 1. issue a get request to `http://<yourserver>/services/package/create/items/{itemId}/{databaseName}/{boolGenerateSubItems}`
 
