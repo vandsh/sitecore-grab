@@ -28,7 +28,7 @@ to your `<configSections>` node,
 
 ### How do I use it? ###
 
-1. ~Sanity check: `http://<yourserver>/services/about` ~
+1. ~~Sanity check: `http://<yourserver>/services/about`~~
 
 1. issue a get request to `http://<yourserver>/services/package/create/items/{itemId}/{databaseName}/{boolGenerateSubItems}`
 
